@@ -1,6 +1,6 @@
 
-import { LoginForm } from "../components/login-form"
-import login_img from "../assets/img/login.png"
+import { LoginForm } from "../features/auth/ui/login-form"
+import login_img from "../shared/assests/img/login.png"
 
 export default function LoginPage() {
   return (

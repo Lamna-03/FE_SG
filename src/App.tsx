@@ -1,26 +1,23 @@
 // src/App.tsx
 
-import { Routes, Route } from "react-router-dom";
-
-// 1. Import các "page" của bạn
-// (Giả sử bạn đã tạo các file này trong thư mục /page)
+import { Routes, Route, Navigate } from "react-router-dom";
+import React, {Suspense} from "react";
 import LoginPage from "@/page/Login";
-import DashboardPage from "@/page/Dashboard"; // <-- "Trang tiếp theo"
-// import ProductsPage from "@/page/Products";
-// import AdminDashboard from "@/page/AdminDashboard";
-import ProtectedRoute from "@/page/ProtectedRoute"; // <-- 1. Import "người gác cổng"
+//import DashboardPage from "@/page/Dashboard"; 
+
+import ProtectedRoute from "@/page/ProtectedRoute";
+const LazyDashboardPage = React.lazy(() => import('@/page/Dashboard'));
 function App() {
   return (
-    // 2. <Routes> là nơi chứa tất cả các trang
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route element={<ProtectedRoute />}>
-        {/* Đặt tất cả các trang cần bảo vệ vào bên trong */}
-        <Route path="/" element={<DashboardPage />} />
-        {/* <Route path="/profile" element={<ProfilePage />} /> */}
-        {/* <Route path="/settings" element={<SettingsPage />} /> */}
-      </Route>
-    </Routes>
+    <Suspense fallback={<div className="loading-spinner" >Loading...</div>}>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<LazyDashboardPage />} />
+        </Route>
+      </Routes>
+    </Suspense>
   )
 }
 

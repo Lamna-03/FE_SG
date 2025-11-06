@@ -1,15 +1,24 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import LoginPage from "./page/Login"
+// src/App.tsx
 
+import { Routes, Route, Navigate } from "react-router-dom";
+import React, {Suspense} from "react";
+import LoginPage from "@/page/Login";
+//import DashboardPage from "@/page/Dashboard"; 
+
+import ProtectedRoute from "@/page/ProtectedRoute";
+const LazyDashboardPage = React.lazy(() => import('@/page/Dashboard'));
 function App() {
   return (
-    <BrowserRouter basename="/FE_SG">
+    <Suspense fallback={<div className="loading-spinner" >Loading...</div>}>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        {/* thêm các route khác */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<LazyDashboardPage />} />
+        </Route>
       </Routes>
-    </BrowserRouter>
+    </Suspense>
   )
 }
 
-export default App
+export default App;

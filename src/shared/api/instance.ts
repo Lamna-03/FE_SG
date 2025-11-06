@@ -1,56 +1,75 @@
+// src/shared/api/instance.ts
+
 import axios from "axios";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const getToken = () => {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("accessToken") || null;
-  }
-};
-
+import { getAccessToken, getRefreshToken, saveTokens, clearTokens } from "@/shared/lib/token/tokenStorage";
+console.log("Kiểm tra env:");
+console.log("GIÁ TRỊ VITE_API_URL LÀ:", import.meta.env.VITE_API_URL);
 const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// 3. Cấu hình Interceptors
+// Interceptor 1: Gắn Access Token vào MỖI request
 instance.interceptors.request.use(
   (config) => {
-    const token = getToken();
+    const token = getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Interceptor cho Response
+// Interceptor 2: Xử lý khi Access Token HẾT HẠN (Lỗi 401)
 instance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem("accessToken");
-      window.location.href = "/login";
-      console.log("Unauthorized! Redirecting to login...");
+  (response) => response, // Trả về response nếu thành công
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Kiểm tra nếu lỗi là 401 và request này không phải là request "thử lại"
+    if ((error.response && error.response.status === 401 && !originalRequest._retry)) {
+      originalRequest._retry = true; // Đánh dấu là đã thử lại
+      
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        // Nếu không có refresh token, đá ra trang login
+        clearTokens();
+        window.location.href = '/login';
+        return Promise.reject(error);
+      }
+
+      try {
+        // Tạo một instance axios RIÊNG để gọi refresh, tránh vòng lặp
+        const refreshInstance = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+        
+        // Gọi API để lấy token mới (giả sử endpoint là /refresh)
+        const response = await refreshInstance.post("/auth/refresh-token", { refreshToken });
+
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+
+        // Lưu token mới
+        saveTokens(newAccessToken, newRefreshToken);
+
+        // Cập nhật header của request GỐC với token mới
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        // Gọi lại request GỐC đã bị lỗi 401
+        return instance(originalRequest);
+
+      } catch (refreshError) {
+        // Nếu refresh token cũng hết hạn -> Xóa hết token và đá ra login
+        clearTokens();
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
     }
-    return Promise.reject(error);
+
+    return Promise.reject(error); // Trả về lỗi nếu không phải 401
   }
 );
-    
 
 export default instance;
-
-// Ngắn gọn: Chỉ cần gọi instance.get('/products') thay vì axios.get('http://localhost:8080/api/products').
-
-// Tự động: Token xác thực được tự động đính kèm vào mỗi request.
-
-// Tập trung: Logic xử lý lỗi chung (như token hết hạn) được quản lý ở một nơi duy nhất, không phải lặp lại ở từng trang.

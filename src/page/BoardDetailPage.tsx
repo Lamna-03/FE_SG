@@ -1,5 +1,5 @@
 // src/page/BoardDetailPage.tsx
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useParams, useOutletContext } from 'react-router-dom';
 import type { Board } from '@/entities/board/model/types';
 // (Bạn sẽ cần tạo một API 'getBoardByIdApi' tương tự như các API khác)

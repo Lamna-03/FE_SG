@@ -1,5 +1,5 @@
 // src/page/Dashboard.tsx
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import { Button } from "@/shared/ui/button/button";
 import WorkspaceSection from "@/widgets/WorkspaceSection/ui/WorkspaceSection";
 import { useOutletContext } from "react-router-dom";

@@ -1,6 +1,4 @@
 // src/page/ProtectedRoute.tsx
-
-import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { getAccessToken } from '@/shared/lib/token/tokenStorage'; // Import hàm lấy token
 

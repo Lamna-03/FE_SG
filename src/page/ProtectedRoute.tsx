@@ -7,6 +7,8 @@ import { getAccessToken } from '@/shared/lib/token/tokenStorage'; // Import hàm
 const ProtectedRoute = () => {
   const token = getAccessToken();
 
+  console.log('ProtectedRoute token:', token); // Debug token
+
   if (!token) {
     // Nếu không có token, "đá" người dùng về trang login
     return <Navigate to="/login" replace />;

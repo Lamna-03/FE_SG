@@ -1,86 +1,58 @@
-// src/page/DashboardPage.tsx
+// src/page/Dashboard.tsx
+import React, { useEffect } from "react";
+import { Button } from "@/shared/ui/button/button";
+import WorkspaceSection from "@/widgets/WorkspaceSection/ui/WorkspaceSection";
+import { useOutletContext } from "react-router-dom";
 
-import React, { useState } from "react";
-import { Button } from "@/shared/ui/button/button"; // Import Button của bạn
-import { getUserDetailsApi } from "@/features/user/userApi"; // Import hàm API vừa tạo
+type HeaderContextType = (title: string) => void;
 
-// (Giả sử đây là cấu trúc User)
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatarUrl: string;
-  createdAt: string;
-    updatedAt: string;
-  // ... các trường khác
-}
-
+import { useWorkspaceStore } from "@/entities/workspace/model/workspaceStore";
 const DashboardPage = () => {
-  // --- 1. Tạo các state (các "flag") ---
-  
-  // State để lưu data user
-  const [userData, setUserData] = useState<User | null>(null);
-  // State để biết đang tải hay không
-  const [isLoading, setIsLoading] = useState(false);
-  // State để lưu thông báo lỗi
-  const [error, setError] = useState<string | null>(null);
+  const setHeaderTitle = useOutletContext<HeaderContextType>();
+  useEffect(() => {
+    setHeaderTitle("Dashboard");
+  }, [setHeaderTitle]);
+  const { workspaces, isLoadingWorkspaces, error } = useWorkspaceStore();
 
-  // --- 2. Viết hàm xử lý bấm nút ---
-  const handleFetchUser = async () => {
-    setIsLoading(true); // Bật loading
-    setError(null);     // Xóa lỗi cũ
-    setUserData(null);  // Xóa data cũ
+  const renderContent = () => {
+    if (isLoadingWorkspaces) return <div>Loading Workspaces...</div>;
+    if (error) return <div style={{ color: 'red' }}>Lỗi: {error}</div>;
 
-    try {
-      // Gọi API
-      const user = await getUserDetailsApi();
-      // Lưu data vào state
-      setUserData(user);
-
-    } catch (err) {
-     console.error(err);
-      setError("Không thể tải được thông tin người dùng.");
-    } finally {
-      // Luôn tắt loading ở cuối
-      setIsLoading(false);
-    }
+    return workspaces.map((ws) => (
+      <WorkspaceSection key={ws.id} workspace={ws} />
+    ));
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Dashboard</h1>
-      <p>Chào mừng bạn!</p>
-      
-      <hr style={{ margin: '20px 0' }} />
+    <div style={styles.layout}>
+      <main style={styles.mainContent}>
+        <header style={styles.header}>
+          <h1 style={styles.pageTitle}>Dashboard</h1>
+          <Button>+ New Workspace</Button>
+        </header>
 
-      {/* --- 3. Nút bấm để gọi API --- */}
-      <Button onClick={handleFetchUser} disabled={isLoading}>
-        {isLoading ? "Đang tải..." : "Lấy thông tin User"}
-      </Button>
-
-      {/* --- 4. Hiển thị kết quả --- */}
-      <div style={{ marginTop: '20px' }}>
-        {/* Hiển thị trạng thái Loading */}
-        {isLoading && <p>Loading data...</p>}
-
-        {/* Hiển thị lỗi (nếu có) */}
-        {error && <p style={{ color: 'red' }}>Lỗi: {error}</p>}
-
-        {/* Hiển thị data (nếu thành công) */}
-        {userData && (
-          <div>
-            <h3>Thông tin User (Đã lấy từ API):</h3>
-            <pre>{JSON.stringify(userData, null, 2)}</pre>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Tên:</strong> {userData.name}</p>
-            <p><strong>Avatar URL:</strong> {userData.avatarUrl}</p>
-            <p><strong>Ngày tạo:</strong> {new Date(userData.createdAt).toLocaleDateString()}</p>
-            <p><strong>Ngày cập nhật:</strong> {new Date(userData.updatedAt).toLocaleDateString()}</p>
-          </div>
-        )}
-      </div>
+        
+        {renderContent()}
+      </main>
     </div>
   );
+};
+
+// CSS (giống Trello)
+const styles = {
+  layout: { display: 'flex', minHeight: '100vh' },
+  mainContent: {
+    flex: 1,
+    padding: '24px 48px',
+    backgroundColor: '#FFFFFF',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '24px'
+  },
+  pageTitle: { margin: 0, fontSize: '28px', fontWeight: 700 }
 };
 
 export default DashboardPage;

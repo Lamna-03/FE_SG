@@ -2,20 +2,22 @@ import { Search, Plus, Kanban } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
 import { BoardCard } from "@/features/dashboard/ui/boad-card";
-import type { ViewMode } from "../shared/types";
-import type { Board } from "@/shared/lib/types";
+import { WorkspaceContext } from "../shared/context";
+import { useContext } from "react";
 
 export function WorkspaceDisplay({
-    searchQuery,
     setIsCreateBoardOpen,
-    filteredAndSortedBoards,
-    viewMode,
 }: {
-    searchQuery: string;
-    filteredAndSortedBoards: Array<Board>;
     setIsCreateBoardOpen: (open: boolean) => void;
-    viewMode: ViewMode;
 }) {
+    console.log("%cWorkspaceDisplay rendered", "color: yellow");
+
+    const {
+        searchQuery,
+        viewMode,
+        boards: filteredAndSortedBoards,
+    } = useContext(WorkspaceContext);
+
     return (
         <>
             {/* Results Info */}

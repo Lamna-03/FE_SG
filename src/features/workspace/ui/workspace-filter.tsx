@@ -1,54 +1,42 @@
-import { Search, Filter, ArrowUpAZ, ArrowDownAZ, Clock, Calendar, Grid, List } from 'lucide-react';
-import { Button } from '@/shared/ui/button';
-import { Input } from '@/shared/ui/input';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu';
-import type { SortOption, ViewMode } from '../shared/types';
+// import { Filter, ArrowUpAZ, ArrowDownAZ, Clock, Calendar, Grid, List } from 'lucide-react';
+// import { Button } from '@/shared/ui/button';
+// import {
+//     DropdownMenu,
+//     DropdownMenuContent,
+//     DropdownMenuItem,
+//     DropdownMenuTrigger,
+// } from '@/shared/ui/dropdown-menu';
+// import { useContext } from 'react';
+// import { WorkspaceContext, WorkspaceDisplayContext } from '../shared/context';
+import FilterSearchInput from './filter-search-input';
 
-export function WorkspaceFilter({
-    searchQuery,
-    setSearchQuery,
-    sortBy,
-    setSortBy,
-    viewMode,
-    setViewMode,
-}: {
-    searchQuery: string;
-    setSearchQuery: (query: string) => void;
-    sortBy: SortOption;
-    setSortBy: (option: SortOption) => void;
-    viewMode: ViewMode;
-    setViewMode: (mode: ViewMode) => void;
-}) {
-    const getSortLabel = () => {
-        switch (sortBy) {
-            case 'az': return 'A-Z';
-            case 'za': return 'Z-A';
-            case 'recent': return 'Most Recent';
-            case 'oldest': return 'Least Recent';
-            default: return 'Sort';
-        }
-    };
+export function WorkspaceFilter() {
+    console.log("%cWorkspaceFilter rendered", "color: red");
+
+    // const {
+    //     sortBy,
+    //     viewMode
+    // } = useContext(WorkspaceContext)
+
+    // const { setSortBy, setViewMode } = useContext(WorkspaceDisplayContext);
+
+    // const getSortLabel = () => {
+    //     switch (sortBy) {
+    //         case 'az': return 'A-Z';
+    //         case 'za': return 'Z-A';
+    //         case 'recent': return 'Most Recent';
+    //         case 'oldest': return 'Least Recent';
+    //         default: return 'Sort';
+    //     }
+    // };
 
     return (
         <>
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4 flex-1">
-                    <div className="relative flex-1 max-w-sm">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Search boards..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-10"
-                        />
-                    </div>
+                    <FilterSearchInput />
 
-                    <DropdownMenu>
+                    {/* <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="gap-2">
                                 <Filter className="h-4 w-4" />
@@ -73,10 +61,10 @@ export function WorkspaceFilter({
                                 Least Recent
                             </DropdownMenuItem>
                         </DropdownMenuContent>
-                    </DropdownMenu>
+                    </DropdownMenu> */}
                 </div>
 
-                {/* View Mode Toggle */}
+                {/* View Mode Toggle
                 <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
                     <Button
                         size="sm"
@@ -94,7 +82,7 @@ export function WorkspaceFilter({
                     >
                         <List className="h-4 w-4" />
                     </Button>
-                </div>
+                </div> */}
             </div>
         </>
     );

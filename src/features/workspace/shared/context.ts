@@ -9,7 +9,7 @@ export type WorkspaceContextType = {
     boards: Board[]
 };
 
-export type WorkspaceDisplayContextType = {
+export type WorkspaceDispatchContextType = {
     setSearchQuery: (query: string) => void;
     setSortBy: (option: SortOption) => void;
     setViewMode: (mode: ViewMode) => void;
@@ -22,7 +22,7 @@ export const WorkspaceContext = createContext<WorkspaceContextType>({
     boards: [],
 })
 
-export const WorkspaceDisplayContext = createContext<WorkspaceDisplayContextType>({
+export const WorkspaceDisplayContext = createContext<WorkspaceDispatchContextType>({
     setSearchQuery: () => {},
     setSortBy: () => {},
     setViewMode: () => {},

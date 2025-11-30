@@ -39,7 +39,7 @@ export function WorkspacePage() {
     }
 
     return (
-        <WorkspaceProvider>
+        <WorkspaceProvider initialBoards={workspaceBoards}>
             <div className="flex-1 space-y-6 p-8 pt-6">
                 {/* Header */}
                 <div className="space-y-2">

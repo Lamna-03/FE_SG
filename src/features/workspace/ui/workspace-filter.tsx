@@ -16,7 +16,7 @@ export function WorkspaceFilter() {
         viewMode,
     } = useContext(WorkspaceContext)
 
-    const { setSortBy, setViewMode } = useContext(WorkspaceDispatchContext);
+    const dispatch = useContext(WorkspaceDispatchContext);
 
     const getSortLabel = () => {
         switch (sortBy) {
@@ -42,19 +42,19 @@ export function WorkspaceFilter() {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
-                            <DropdownMenuItem onClick={() => setSortBy('az')}>
+                            <DropdownMenuItem onClick={() => dispatch({ type: 'SET_SORT_BY', payload: 'az' })}>
                                 <ArrowUpAZ className="w-4 h-4 mr-2" />
                                 A-Z
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setSortBy('za')}>
+                            <DropdownMenuItem onClick={() => dispatch({ type: 'SET_SORT_BY', payload: 'za' })}>
                                 <ArrowDownAZ className="w-4 h-4 mr-2" />
                                 Z-A
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setSortBy('recent')}>
+                            <DropdownMenuItem onClick={() => dispatch({ type: 'SET_SORT_BY', payload: 'recent' })}>
                                 <Clock className="w-4 h-4 mr-2" />
                                 Most Recent
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setSortBy('oldest')}>
+                            <DropdownMenuItem onClick={() => dispatch({ type: 'SET_SORT_BY', payload: 'oldest' })}>
                                 <Calendar className="w-4 h-4 mr-2" />
                                 Least Recent
                             </DropdownMenuItem>
@@ -67,7 +67,7 @@ export function WorkspaceFilter() {
                     <Button
                         size="sm"
                         variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                        onClick={() => setViewMode('grid')}
+                        onClick={() => dispatch({ type: 'SET_VIEW_MODE', payload: 'grid' })}
                         className="h-8 w-8 p-0"
                     >
                         <Grid className="h-4 w-4" />
@@ -75,7 +75,7 @@ export function WorkspaceFilter() {
                     <Button
                         size="sm"
                         variant={viewMode === 'list' ? 'default' : 'ghost'}
-                        onClick={() => setViewMode('list')}
+                        onClick={() => dispatch({ type: 'SET_VIEW_MODE', payload: 'list' })}
                         className="h-8 w-8 p-0"
                     >
                         <List className="h-4 w-4" />
